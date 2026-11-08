@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#080b1b" />
+  <title>NEON MAZE — Route Memory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Neon Maze home"><span class="brand-mark">◒</span><span>NEON<span class="brand-light">MAZE</span></span></a>
+      <div class="top-note"><span class="live-dot"></span> ARCADE SIMULATION <span class="separator">/</span> 01</div>
+      <button id="soundBtn" class="sound-btn" aria-label="Toggle sound" title="Toggle sound"><span id="soundIcon">♫</span><span class="sound-label">SOUND ON</span></button>
+    </header>
+
+    <section class="game-layout" aria-label="Neon Maze game">
+      <div class="arena-wrap">
+        <div class="arena-head">
+          <div class="arena-title"><span class="eyebrow">SECTOR <b id="sectorNum">01</b></span><h1>THE <em>MAZE</em></h1></div>
+          <div class="level-chip"><span class="chip-dot"></span><span id="levelName">FIRST CONTACT</span></div>
+        </div>
+        <div class="board-frame">
+          <canvas id="game" aria-label="Pac-Man maze game board"></canvas>
+          <div class="board-vignette"></div>
+          <div id="startScreen" class="screen-cover">
+            <div class="cover-orbit"><div class="cover-pac"></div><span class="orbit-ghost ghost-pink">●</span><span class="orbit-ghost ghost-blue">●</span></div>
+            <div class="cover-kicker">A MAZE THAT REMEMBERS</div>
+            <h2>Every turn<br><span>leaves a trace.</span></h2>
+            <p>The ghosts study your favorite corridors.<br>Don't let them predict your next move.</p>
+            <button id="startBtn" class="primary-btn">ENTER THE MAZE <span>↗</span></button>
+            <div class="key-hint">WASD / ARROWS <span>·</span> TOUCH TO MOVE</div>
+          </div>
+          <div id="pauseScreen" class="pause-cover hidden"><div class="pause-symbol">Ⅱ</div><strong>PAUSED</strong><span>Press SPACE to resume</span></div>
+          <div id="resultScreen" class="result-cover hidden"><div id="resultEyebrow" class="cover-kicker">SIGNAL LOST</div><h2 id="resultTitle">GAME OVER</h2><p id="resultText">The maze won this round.</p><button id="restartBtn" class="primary-btn">PLAY AGAIN <span>↗</span></button></div>
+          <div class="corner-tag">DEPTH <b>03</b></div>
+        </div>
+        <div class="board-foot"><span><i class="tiny-dot"></i> <b id="dotsLeft">00</b> NODES LEFT</span><span class="foot-center">COLLECT · SURVIVE · REPEAT</span><span>HI-SCORE <b id="highScore">00000</b></span></div>
+      </div>
+      <div class="mobile-pad" aria-label="Touch direction controls">
+        <button data-dir="up" class="pad-btn pad-up" aria-label="Move up">▲</button>
+        <button data-dir="left" class="pad-btn pad-left" aria-label="Move left">◀</button>
+        <button data-dir="down" class="pad-btn pad-down" aria-label="Move down">▼</button>
+        <button data-dir="right" class="pad-btn pad-right" aria-label="Move right">▶</button>
+        <button id="mobilePause" class="pad-pause" aria-label="Pause game">Ⅱ</button>
+      </div>
+      <aside class="side-panel">
+        <div class="stat-row">
+          <div class="stat-block"><span class="eyebrow">SCORE</span><strong id="score">00000</strong></div>
+          <div class="stat-block align-right"><span class="eyebrow">LIVES</span><div id="lives" class="lives" aria-label="3 lives"><span>♥</span><span>♥</span><span>♥</span></div></div>
+        </div>
+        <div class="divider"></div>
+        <section class="memory-card">
+          <div class="section-heading"><span class="pulse-icon">⌁</span><span>GHOST MEMORY</span><span class="memory-live">LIVE</span></div>
+          <p class="memory-copy">They are mapping your habits.<br><b>Repeated routes become targets.</b></p>
+          <div class="memory-track"><div id="memoryFill" class="memory-fill"></div><span class="memory-marker"></span></div>
+          <div class="memory-labels"><span>SCANNING</span><b id="memoryState">NO DATA</b><span>LOCKED IN</span></div>
+          <div class="memory-readout"><span class="readout-dot"></span><span id="memoryMessage">Move to leave a trace</span></div>
+        </section>
+        <section class="intel-card">
+          <div class="section-heading"><span class="intel-icon">✳</span><span>FIELD NOTES</span></div>
+          <div class="intel-line"><span class="note-number">01</span><span>Clear every node to open the next sector.</span></div>
+          <div class="intel-line"><span class="note-number">02</span><span>Power cores let you turn the hunters around.</span></div>
+          <div class="intel-line"><span class="note-number">03</span><span>Switch up your route. They remember.</span></div>
+        </section>
+        <div class="controls-card">
+          <div class="section-heading"><span class="controls-icon">⌘</span><span>CONTROLS</span></div>
+          <div class="control-row"><span>MOVE</span><div class="keycaps"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></div><span class="or">OR</span><div class="keycaps"><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></div></div>
+          <div class="control-row second-control"><span>PAUSE</span><kbd class="space-key">SPACE</kbd><span class="or">·</span><span>OR TAP</span></div>
+        </div>
+        <div class="panel-bottom"><span>NEON MAZE <b>v1.0</b></span><span>BUILT FOR THE CURIOUS <i>✦</i></span></div>
+      </aside>
+    </section>
+    <footer class="footer"><span>© 2089 NEON ARCADE</span><span class="footer-center">ONE MORE RUN?</span><span>MADE OF LIGHT <b>✳</b></span></footer>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
