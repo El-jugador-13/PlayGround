@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#070b17">
+<title>NOVA//RUN — Signal Run</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+:root{color-scheme:dark;--bg:#070b17;--cyan:#68f2e1;--pink:#ff5d9e;--muted:#8390aa}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:#f4f6ff;font-family:'Space Grotesk',sans-serif;touch-action:none}
+body{display:grid;place-items:center;background:radial-gradient(ellipse at 50% 40%,#131c34 0%,#080d1b 54%,#050811 100%)}
+#shell{position:relative;width:min(100vw,150vh);height:min(100vh,66.6667vw);max-width:1280px;max-height:853px;overflow:hidden;background:#080d19;box-shadow:0 24px 100px #0009;border:1px solid #ffffff12}
+canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#hud{position:absolute;inset:0 0 auto;z-index:2;display:flex;align-items:center;gap:22px;padding:20px 27px;background:linear-gradient(#080d19e8,transparent);pointer-events:none}
+.brand{font-size:15px;font-weight:700;letter-spacing:.13em;white-space:nowrap}.brand b{color:var(--cyan)}
+.meter{display:flex;align-items:center;gap:9px;font:11px 'DM Mono',monospace;color:#aab4ca;letter-spacing:.12em}.hearts{display:flex;gap:5px}.heart{width:13px;height:13px;background:var(--pink);clip-path:path('M6.5 12 1 6.7C-2 2.7 3 .1 6.5 3.2 10-.1 15 2.7 12 6.7z')}.heart.off{background:#ffffff20}
+#objective{margin-left:auto;text-align:right;font:11px 'DM Mono',monospace;color:#b8c2d5;letter-spacing:.12em}#objective strong{display:block;color:var(--cyan);font-size:12px;margin-top:3px}
+#toast{position:absolute;top:82px;left:50%;transform:translateX(-50%);z-index:3;font:11px 'DM Mono',monospace;letter-spacing:.18em;color:var(--cyan);opacity:0;transition:opacity .2s;text-shadow:0 0 15px var(--cyan);pointer-events:none;white-space:nowrap}
+#overlay{position:absolute;inset:0;z-index:4;display:grid;place-items:center;background:linear-gradient(90deg,#050914b8,#05091475,#050914b8);backdrop-filter:blur(4px);transition:opacity .25s}
+#overlay.hidden{opacity:0;pointer-events:none}.panel{width:min(510px,88%);padding:36px 38px 32px;border:1px solid #68f2e13d;background:linear-gradient(145deg,#111b2feF,#0a1020f2);box-shadow:0 18px 90px #0009;position:relative}.panel:before{content:'';position:absolute;left:-1px;top:-1px;width:62px;height:2px;background:var(--cyan);box-shadow:0 0 18px var(--cyan)}
+.eyebrow{font:10px 'DM Mono',monospace;letter-spacing:.25em;color:var(--cyan);margin-bottom:17px}.title{font-size:clamp(34px,6vw,58px);line-height:.96;letter-spacing:-.06em;font-weight:700;margin:0 0 14px}.title span{color:var(--cyan)}.desc{color:#aab4c9;font-size:14px;line-height:1.6;margin:0 0 22px;max-width:390px}.objective-copy{border-left:2px solid var(--pink);padding:9px 13px;margin:18px 0 24px;color:#d4d9e7;font-size:12px;line-height:1.6;background:#ff5d9e0a}.objective-copy b{color:#fff}.row{display:flex;align-items:center;gap:12px}.button{border:0;background:var(--cyan);color:#061014;padding:13px 20px;font:700 11px 'DM Mono',monospace;letter-spacing:.16em;cursor:pointer;transition:transform .15s,filter .15s}.button:hover{transform:translateY(-2px);filter:brightness(1.12)}.hint{color:#7d89a1;font:10px 'DM Mono',monospace;line-height:1.6}.result{font:11px 'DM Mono',monospace;color:#aab4c9;margin:0 0 19px;letter-spacing:.1em}#touchControls{display:none;position:absolute;inset:auto 0 0;z-index:3;justify-content:space-between;align-items:end;padding:0 22px max(20px,env(safe-area-inset-bottom));pointer-events:none}.stick{width:116px;height:116px;border:1px solid #ffffff32;border-radius:50%;background:#10182b6e;position:relative;pointer-events:auto;touch-action:none}.stick:after{content:'';position:absolute;inset:34px;border-radius:50%;background:#68f2e122;border:1px solid #68f2e166}.action{pointer-events:auto;touch-action:none;width:76px;height:76px;border:1px solid #ff5d9e88;border-radius:50%;background:#ff5d9e24;color:#ff9abe;font:10px 'DM Mono',monospace;letter-spacing:.12em;display:grid;place-items:center;user-select:none}.action:active{background:#ff5d9e55}
+@media (pointer:coarse){#touchControls{display:flex}#hud{padding:14px 16px}.brand{font-size:12px}.meter{font-size:9px;gap:6px}#objective{font-size:9px}.heart{width:11px;height:11px}.panel{padding:27px 25px}.hint{max-width:130px}}
+@media (max-aspect-ratio:4/5){#shell{width:100vw;height:100dvh;max-height:none;max-width:none}.panel{padding:26px 24px}.title{font-size:44px}#hud{padding:18px 15px}.meter{gap:5px}#touchControls{padding-inline:18px}}
+</style>
+</head>
+<body>
+<main id="shell" aria-label="Nova Run game">
+<canvas id="game" aria-label="Game arena"></canvas>
+<header id="hud"><div class="brand">NOVA<b>//</b>RUN</div><div class="meter"><span>HULL</span><div class="hearts" id="hearts"></div></div><div class="meter"><span>CHARGE</span><span id="charge">● ● ● ● ● ●</span></div><div id="objective">OBJECTIVE<strong id="goalText">FIND THE SIGNALS</strong></div></header>
+<div id="toast"></div>
+<div id="overlay"><section class="panel"><div class="eyebrow">DEEP SPACE / SECTOR 09</div><h1 class="title" id="panelTitle">NOVA<span>//</span>RUN</h1><p class="desc" id="panelDesc">The relay is dark. Recover its six signal cores, then make it to the extraction gate before the drones close in.</p><div class="objective-copy" id="panelExtra"><b>WASD / ARROWS</b> to pilot &nbsp;·&nbsp; <b>CLICK / SPACE</b> to fire<br><b>SHIFT</b> to dash through danger. Collect all 6 cores to unlock the gate.</div><div class="row"><button class="button" id="startBtn">BEGIN RUN&nbsp; →</button><div class="hint" id="panelHint">A / D or ← / → to aim<br>ESC to pause</div></div></section></div>
+<div id="touchControls"><div class="stick" id="stick"></div><button class="action" id="fireBtn">PULSE<br>FIRE</button></div>
+</main>
+<script>
+(() => {
+'use strict';
+const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d'),shell=document.querySelector('#shell');
+const $=s=>document.querySelector(s),overlay=$('#overlay'),title=$('#panelTitle'),desc=$('#panelDesc'),extra=$('#panelExtra'),startBtn=$('#startBtn'),hint=$('#panelHint');
+const W=1000,H=650,keys=new Set(),mouse={x:500,y:325,down:false};let dpr=1,state='menu',last=0,elapsed=0,spawnTimer=0,toastTimer=0,screenShake=0,score=0;
+let player,cores,drones,shots,enemyShots,particles,gate,stars,stickInput={x:0,y:0};
+function resize(){const r=shell.getBoundingClientRect();dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);ctx.setTransform(canvas.width/W,0,0,canvas.height/H,0,0)}
+new ResizeObserver(resize).observe(shell);resize();
+function rand(a,b){return a+Math.random()*(b-a)}
+function reset(){elapsed=0;spawnTimer=1;score=0;player={x:W/2,y:H/2,r:12,hp:3,angle:0,speed:210,fire:0,dash:0,dashLock:0,invuln:0};cores=[];drones=[];shots=[];enemyShots=[];particles=[];gate={x:W-90,y:H/2,r:28,open:false};stars=Array.from({length:120},()=>({x:rand(0,W),y:rand(0,H),r:rand(.4,1.8),a:rand(.2,.8),phase:rand(0,7)}));
+const spots=[[140,130],[500,105],[850,160],[175,500],[490,525],[830,475]];cores=spots.map(([x,y],i)=>({x,y,r:9,phase:rand(0,7),id:i}));drawHud()}
+function showToast(t){const el=$('#toast');el.textContent=t;el.style.opacity=1;toastTimer=1.5}
+function begin(){reset();state='playing';overlay.classList.add('hidden');last=performance.now();requestAnimationFrame(loop)}
+function setPanel(kind){overlay.classList.remove('hidden');if(kind==='pause'){title.innerHTML='RUN<span>//</span> PAUSED';desc.textContent='Catch your breath, pilot. The drones are waiting.';extra.innerHTML='<b>WASD / ARROWS</b> to move &nbsp;·&nbsp; <b>CLICK / SPACE</b> to fire<br><b>SHIFT</b> to dash. Your run is paused.';startBtn.textContent='RESUME RUN  →';hint.textContent='ESC to resume';}
+else if(kind==='win'||kind==='lose'){title.innerHTML=kind==='win'?'SIGNAL<span>//</span> SAVED':'HULL<span>//</span> BREACH';desc.textContent=kind==='win'?'Relay restored. The sector is back online, thanks to you.':'Your ship went dark before the relay could be reached.';extra.innerHTML=`RUN TIME <b>${formatTime(elapsed)}</b> &nbsp;·&nbsp; DRONES CLEARED <b>${score}</b>`;startBtn.textContent=kind==='win'?'FLY AGAIN  →':'RETRY RUN  →';hint.textContent='Your next run starts fresh';}
+else{title.innerHTML='NOVA<span>//</span>RUN';desc.textContent='The relay is dark. Recover its six signal cores, then make it to the extraction gate before the drones close in.';extra.innerHTML='<b>WASD / ARROWS</b> to pilot &nbsp;·&nbsp; <b>CLICK / SPACE</b> to fire<br><b>SHIFT</b> to dash through danger. Collect all 6 cores to unlock the gate.';startBtn.textContent='BEGIN RUN  →';hint.innerHTML='A / D or ← / → to aim<br>ESC to pause';}}
+function formatTime(n){const s=Math.floor(n);return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`}
+startBtn.addEventListener('click',()=>{if(state==='paused'){state='playing';overlay.classList.add('hidden');last=performance.now();requestAnimationFrame(loop)}else begin()});
+function drawHud(){const h=$('#hearts');h.innerHTML='';for(let i=0;i<3;i++){const e=document.createElement('i');e.className='heart'+(player&&i>=player.hp?' off':'');h.appendChild(e)}const n=cores?cores.length:6;$('#charge').textContent=Array.from({length:6},(_,i)=>i<n?'●':'○').join(' ');$('#goalText').textContent=n?`SIGNALS ${6-n}/6`: 'REACH THE GATE';}
+function pointer(e){const r=canvas.getBoundingClientRect();mouse.x=(e.clientX-r.left)*W/r.width;mouse.y=(e.clientY-r.top)*H/r.height}
+canvas.addEventListener('pointermove',pointer);canvas.addEventListener('pointerdown',e=>{pointer(e);mouse.down=true;canvas.setPointerCapture?.(e.pointerId)});window.addEventListener('pointerup',()=>mouse.down=false);
+window.addEventListener('keydown',e=>{const k=e.key.toLowerCase();keys.add(k);if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault();if(k==='escape'){if(state==='playing'){state='paused';setPanel('pause')}else if(state==='paused'){state='playing';overlay.classList.add('hidden');last=performance.now();requestAnimationFrame(loop)}}});window.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));
+const stick=$('#stick');let stickId=null;stick.addEventListener('pointerdown',e=>{stickId=e.pointerId;stick.setPointerCapture(e.pointerId);moveStick(e)});stick.addEventListener('pointermove',e=>{if(stickId===e.pointerId)moveStick(e)});function moveStick(e){const r=stick.getBoundingClientRect(),dx=(e.clientX-r.left-r.width/2)/(r.width/2),dy=(e.clientY-r.top-r.height/2)/(r.height/2),m=Math.hypot(dx,dy);stickInput={x:dx/Math.max(1,m),y:dy/Math.max(1,m)}}function stopStick(){stickId=null;stickInput={x:0,y:0}}stick.addEventListener('pointerup',stopStick);stick.addEventListener('pointercancel',stopStick);
+$('#fireBtn').addEventListener('pointerdown',e=>{e.preventDefault();mouse.down=true});window.addEventListener('pointerup',()=>mouse.down=false);
+function addParticle(x,y,color,n=8,speed=130){for(let i=0;i<n;i++){const a=rand(0,Math.PI*2),v=rand(speed*.25,speed);particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:rand(.25,.65),max:.65,r:rand(1.5,3.8),color})}}
+function fire(){if(player.fire>0)return;player.fire=.19;const target=drones.reduce((best,d)=>{const dist=Math.hypot(d.x-player.x,d.y-player.y);return dist<best.dist?{d,dist}:best},{dist:Infinity}).d;let a=player.angle;if(target&&stickInput.x===0&&stickInput.y===0&&!mouse.down){a=Math.atan2(target.y-player.y,target.x-player.x)}shots.push({x:player.x+Math.cos(a)*16,y:player.y+Math.sin(a)*16,vx:Math.cos(a)*520,vy:Math.sin(a)*520,life:.9});addParticle(player.x+Math.cos(a)*15,player.y+Math.sin(a)*15,'#68f2e1',3,55)}
+function damage(){if(player.invuln>0)return;player.hp--;player.invuln=1.2;screenShake=10;addParticle(player.x,player.y,'#ff5d9e',18,200);drawHud();if(player.hp<=0){state='lose';setPanel('lose')}}
+function update(dt){elapsed+=dt;player.fire-=dt;player.dashLock-=dt;player.dash-=dt;player.invuln-=dt;spawnTimer-=dt;
+let mx=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0)+stickInput.x,my=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0)+stickInput.y;let mag=Math.hypot(mx,my);if(mag>1){mx/=mag;my/=mag}
+if(Math.abs(mx)+Math.abs(my)>.02)player.angle=Math.atan2(my,mx);else if(mouse.down)player.angle=Math.atan2(mouse.y-player.y,mouse.x-player.x);else if(drones.length)player.angle=Math.atan2(drones[0].y-player.y,drones[0].x-player.x);
+if(keys.has('shift')&&player.dashLock<=0){player.dash=.17;player.dashLock=1.25;showToast('PHASE DASH');}
+const speed=player.dash>0?620:player.speed;player.x=Math.max(26,Math.min(W-26,player.x+mx*speed*dt));player.y=Math.max(65,Math.min(H-28,player.y+my*speed*dt));
+if(mouse.down||keys.has(' ')||$('#fireBtn').matches(':active'))fire();
+if(spawnTimer<=0){if(drones.length<7){const side=Math.floor(rand(0,4)),p=side===0?{x:rand(25,W-25),y:58}:side===1?{x:rand(25,W-25),y:H-25}:side===2?{x:25,y:rand(70,H-25)}:{x:W-25,y:rand(70,H-25)};drones.push({...p,r:rand(12,17),hp:2,phase:rand(0,7),speed:rand(65,91),shot:rand(1,2.4)})}spawnTimer=Math.max(.65,2.5-elapsed*.012)}
+for(const d of drones){d.phase+=dt;const a=Math.atan2(player.y-d.y,player.x-d.x),dist=Math.hypot(player.x-d.x,player.y-d.y);if(dist>60){d.x+=Math.cos(a)*d.speed*dt;d.y+=Math.sin(a)*d.speed*dt}d.shot-=dt;if(d.shot<=0&&dist<420){const aim=a+rand(-.08,.08);enemyShots.push({x:d.x,y:d.y,vx:Math.cos(aim)*190,vy:Math.sin(aim)*190,life:3});d.shot=rand(2,3.2)}if(dist<d.r+player.r)damage()}
+for(const s of shots){s.x+=s.vx*dt;s.y+=s.vy*dt;s.life-=dt;for(const d of drones){if(d.hp>0&&Math.hypot(s.x-d.x,s.y-d.y)<d.r+4){d.hp--;s.life=0;addParticle(s.x,s.y,'#68f2e1',5,85);if(d.hp<=0){score++;addParticle(d.x,d.y,'#ff5d9e',12,130)}}}}
+drones=drones.filter(d=>d.hp>0);shots=shots.filter(s=>s.life>0&&s.x>-10&&s.x<W+10&&s.y>50&&s.y<H+10);
+for(const s of enemyShots){s.x+=s.vx*dt;s.y+=s.vy*dt;s.life-=dt;if(Math.hypot(s.x-player.x,s.y-player.y)<player.r+5){s.life=0;damage()}}enemyShots=enemyShots.filter(s=>s.life>0&&s.x>-10&&s.x<W+10&&s.y>50&&s.y<H+10);
+for(const c of cores){c.phase+=dt;if(Math.hypot(c.x-player.x,c.y-player.y)<c.r+player.r+6){c.taken=true;addParticle(c.x,c.y,'#68f2e1',20,180);showToast('SIGNAL CORE RECOVERED');}}const before=cores.length;cores=cores.filter(c=>!c.taken);if(before!==cores.length){drawHud();if(!cores.length){gate.open=true;showToast('GATE ONLINE — GET TO EXTRACTION')}}
+if(gate.open&&Math.hypot(player.x-gate.x,player.y-gate.y)<gate.r+player.r){state='win';setPanel('win')}
+for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=Math.pow(.05,dt);p.vy*=Math.pow(.05,dt);p.life-=dt}particles=particles.filter(p=>p.life>0);screenShake=Math.max(0,screenShake-dt*28);if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('#toast').style.opacity=0}
+}
+function draw(){const sx=rand(-screenShake,screenShake),sy=rand(-screenShake,screenShake);ctx.save();ctx.translate(sx,sy);ctx.clearRect(-20,-20,W+40,H+40);ctx.fillStyle='#080d19';ctx.fillRect(-20,-20,W+40,H+40);
+const grad=ctx.createRadialGradient(W/2,H/2,30,W/2,H/2,560);grad.addColorStop(0,'#111a2b');grad.addColorStop(1,'#080d19');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+for(const s of stars){ctx.globalAlpha=s.a*(.72+.28*Math.sin(elapsed*1.3+s.phase));ctx.fillStyle='#c8e8ff';ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
+ctx.strokeStyle='#7d94b510';ctx.lineWidth=1;for(let x=50;x<W;x+=50){ctx.beginPath();ctx.moveTo(x,55);ctx.lineTo(x,H);ctx.stroke()}for(let y=100;y<H;y+=50){ctx.beginPath();ctx.moveTo(20,y);ctx.lineTo(W-20,y);ctx.stroke()}
+ctx.strokeStyle='#8ca1c533';ctx.lineWidth=2;ctx.strokeRect(20,54,W-40,H-74);ctx.strokeStyle='#68f2e122';ctx.setLineDash([5,12]);ctx.strokeRect(27,61,W-54,H-88);ctx.setLineDash([]);
+// extraction gate
+ctx.save();ctx.translate(gate.x,gate.y);ctx.rotate(elapsed*.35);ctx.strokeStyle=gate.open?'#68f2e1':'#46516a';ctx.lineWidth=3;ctx.shadowBlur=gate.open?25:0;ctx.shadowColor='#68f2e1';ctx.beginPath();ctx.arc(0,0,gate.r,0,Math.PI*2);ctx.stroke();ctx.rotate(-elapsed*.7);ctx.lineWidth=1;ctx.beginPath();ctx.arc(0,0,gate.r-9,0,Math.PI*2);ctx.stroke();ctx.shadowBlur=0;ctx.fillStyle=gate.open?'#68f2e122':'#77829911';ctx.beginPath();ctx.arc(0,0,gate.r-10,0,Math.PI*2);ctx.fill();ctx.restore();
+for(const c of cores){const pulse=1+Math.sin(elapsed*4+c.phase)*.18;ctx.save();ctx.translate(c.x,c.y);ctx.rotate(elapsed*.7+c.phase);ctx.shadowBlur=20;ctx.shadowColor='#68f2e1';ctx.fillStyle='#68f2e1';ctx.beginPath();ctx.moveTo(0,-c.r*pulse);ctx.lineTo(c.r*.72,0);ctx.lineTo(0,c.r*pulse);ctx.lineTo(-c.r*.72,0);ctx.closePath();ctx.fill();ctx.restore()}
+for(const d of drones){ctx.save();ctx.translate(d.x,d.y);ctx.rotate(d.phase);ctx.shadowBlur=15;ctx.shadowColor='#ff5d9e';ctx.strokeStyle='#ff5d9e';ctx.fillStyle='#25132a';ctx.lineWidth=2;ctx.beginPath();for(let i=0;i<8;i++){const a=i*Math.PI/4,r=i%2?d.r*.68:d.r;ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#ffb0ca';ctx.beginPath();ctx.arc(0,0,3,0,Math.PI*2);ctx.fill();ctx.restore()}
+for(const s of shots){ctx.shadowBlur=12;ctx.shadowColor='#68f2e1';ctx.fillStyle='#b8fff5';ctx.beginPath();ctx.arc(s.x,s.y,3.3,0,Math.PI*2);ctx.fill()}ctx.shadowBlur=0;
+for(const s of enemyShots){ctx.fillStyle='#ff6c9e';ctx.shadowBlur=12;ctx.shadowColor='#ff5d9e';ctx.beginPath();ctx.arc(s.x,s.y,4,0,Math.PI*2);ctx.fill()}ctx.shadowBlur=0;
+for(const p of particles){ctx.globalAlpha=Math.max(0,p.life/p.max);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.r*Math.max(.2,p.life/p.max),0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
+if(player){ctx.save();ctx.translate(player.x,player.y);ctx.rotate(player.angle);if(player.invuln>0&&Math.floor(elapsed*14)%2)ctx.globalAlpha=.35;ctx.shadowBlur=player.dash>0?28:15;ctx.shadowColor='#68f2e1';ctx.fillStyle='#b7fff5';ctx.beginPath();ctx.moveTo(17,0);ctx.lineTo(-11,-9);ctx.lineTo(-7,0);ctx.lineTo(-11,9);ctx.closePath();ctx.fill();ctx.fillStyle='#68f2e1';ctx.beginPath();ctx.arc(-5,0,3,0,Math.PI*2);ctx.fill();if(player.dashLock>0){ctx.strokeStyle='#68f2e155';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,18,-Math.PI/2,-Math.PI/2+(1-player.dashLock/1.25)*Math.PI*2);ctx.stroke()}ctx.restore()}
+ctx.restore()}
+function loop(t){if(state!=='playing')return;const dt=Math.min(.033,(t-last)/1000||0);last=t;update(dt);draw();if(state==='playing')requestAnimationFrame(loop)}
+reset();draw();
+})();
+</script>
+</body>
+</html>
