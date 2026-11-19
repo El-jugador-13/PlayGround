@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101619">
+  <title>AKRÓPOLIS — juego de estrategia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Akrópolis, inicio"><span class="brand-mark">A</span><span>AKRÓPOLIS<small>ESTRATEGIA PARA DOS</small></span></a>
+      <div class="top-actions"><span class="live-label"><i></i> PARTIDA LOCAL</span><button class="icon-button" id="rules-open" aria-label="Abrir reglas">?</button></div>
+    </header>
+
+    <section class="game-layout">
+      <div class="board-column">
+        <div class="board-heading"><div><p class="eyebrow">EL CAMPO DE JUEGO</p><h1>Conquista el <em>centro.</em></h1></div><div class="round-pill"><span id="turn-dot"></span><span id="turn-label">BLANCAS</span><span class="round-divider">/</span><span id="move-number">01</span></div></div>
+        <div class="board-wrap">
+          <div class="board-rim"><svg id="board" viewBox="0 0 760 760" role="grid" aria-label="Tablero de Akrópolis"></svg></div>
+          <div class="board-coordinates"><span>ANAX · BASILEO</span><span>15 FILAS · 113 CASILLAS</span></div>
+        </div>
+        <div class="board-legend"><span><i class="legend-dot ivory"></i> BLANCAS</span><span><i class="legend-dot charcoal"></i> NEGRAS</span><span class="legend-tip">Selecciona una ficha y después su destino</span></div>
+      </div>
+
+      <aside class="side-panel">
+        <section class="turn-card" id="turn-card"><div class="turn-card-top"><span class="eyebrow">JUEGA AHORA</span><span class="turn-index" id="turn-index">01</span></div><div class="player-name"><span class="player-piece" id="player-piece">W</span><div><strong id="player-name">Blancas</strong><small id="player-subtitle">Tu turno</small></div></div><div class="turn-rule">Captura al <b>basileo</b> rival para ganar.</div></section>
+        <div class="piece-counts"><div><span class="count-marker white-marker"></span><span>BLANCAS</span><strong id="white-count">22</strong></div><div><span class="count-marker black-marker"></span><span>NEGRAS</span><strong id="black-count">22</strong></div></div>
+        <section class="actions-card"><div class="section-heading"><h2>Partida</h2><span class="eyebrow" id="game-state">EN CURSO</span></div><div class="action-row"><button class="secondary-button" id="undo-button" disabled>↶ <span>Deshacer</span></button><button class="secondary-button" id="reset-button">↻ <span>Nueva partida</span></button></div><div class="status-message" id="status-message">Elige una ficha para ver sus movimientos.</div></section>
+        <section class="history-card"><div class="section-heading"><h2>Movimientos</h2><span class="eyebrow" id="history-count">0 JUGADAS</span></div><ol id="move-history" class="move-history"><li class="empty-history">La partida comienza aquí.</li></ol></section>
+        <button class="rules-link" id="rules-open-bottom">Cómo jugar <span>↗</span></button>
+      </aside>
+    </section>
+    <footer><span>AKRÓPOLIS <span class="footer-dot">·</span> UN JUEGO DE TÁCTICA</span><span>JUEGA CON CALMA. PIENSA EN GRANDE.</span></footer>
+  </main>
+
+  <div class="modal-backdrop" id="rules-modal" hidden>
+    <section class="rules-dialog" role="dialog" aria-modal="true" aria-labelledby="rules-title"><button class="modal-close" id="rules-close" aria-label="Cerrar">×</button><p class="eyebrow">GUÍA DE JUEGO</p><h2 id="rules-title">Las reglas de <em>Akrópolis</em></h2><p class="rules-intro">Dos ejércitos, un tablero de casillas que se encuentran por las esquinas. Gana quien capture al basileo contrario.</p><div class="rules-grid"><article><span>01</span><h3>Tu turno</h3><p>Selecciona una ficha y una casilla iluminada para moverla. Las capturas son opcionales. No puedes entrar en una casilla ocupada por una ficha propia.</p></article><article><span>02</span><h3>El ejército</h3><p><b>Haplós</b>: avanza una casilla; en su primer movimiento puede avanzar dos. <b>Kleido</b>: se desplaza en Y y salta. <b>Hipeus</b>: salta en L. <b>Peus</b>: movimiento en L sin saltar.</p></article><article><span>03</span><h3>Piezas mayores</h3><p><b>Pyrgos</b>: desliza en línea recta. <b>Thyra</b>: hasta 3 casillas en cualquier dirección. <b>Toxot</b>: desliza en diagonal. <b>Anax</b>: como pyrgos y toxot. <b>Basileo</b>: una casilla en cualquier dirección.</p></article><article><span>04</span><h3>Capturas y ascenso</h3><p>Al capturar un hipeus, puedes reservarlo para que reaparezca como peus en el centro de tu segunda fila; hacerlo consume tu turno. Un haplós que alcanza el extremo opuesto puede ascender a cualquier pieza salvo hipeus.</p></article><article><span>05</span><h3>Final de partida</h3><p>Capturar al basileo rival gana la partida. Si el jugador al turno no tiene movimientos legales, o una posición se repite tres veces, la partida termina en empate.</p></article><article><span>06</span><h3>Convención de movimiento</h3><p>Los movimientos se cuentan por las casillas del tablero: las diagonales entre filas conectan las casillas que se tocan por una esquina. Hipeus y kleidos pueden saltar sobre cualquier ficha.</p></article></div><div class="rules-note">Una partida local para dos personas. Pasa el dispositivo después de cada turno.</div></section>
+  </div>
+  <div class="promotion-backdrop" id="promotion-modal" hidden><section class="promotion-dialog"><p class="eyebrow">ASCENSO</p><h2>¡Tu haplós llegó!</h2><p>Elige en qué pieza se convierte.</p><div id="promotion-options" class="promotion-options"></div></section></div>
+  <div class="promotion-backdrop" id="respawn-modal" hidden><section class="promotion-dialog"><p class="eyebrow">RESERVA DISPONIBLE</p><h2>Vuelve al tablero</h2><p>Tu hipeus capturado puede reaparecer como peus. Esto consume tu turno.</p><button class="primary-button" id="respawn-button">Invocar peus <span>→</span></button><button class="cancel-link" id="respawn-cancel">Ahora no</button></section></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="game.js"></script>
+</body>
+</html>
