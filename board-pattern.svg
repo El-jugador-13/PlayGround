@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="760" viewBox="0 0 760 760">
+  <defs>
+    <pattern id="diamondsA" width="152" height="152" patternUnits="userSpaceOnUse">
+      <rect width="152" height="152" fill="#f7f7f3"/>
+      <g fill="#090909">
+        <path d="M38 0L76 38L38 76L0 38Z"/>
+        <path d="M114 76L152 114L114 152L76 114Z"/>
+        <path d="M38 76L76 114L38 152L0 114Z"/>
+        <path d="M114 0L152 38L114 76L76 38Z"/>
+      </g>
+    </pattern>
+  </defs>
+  <rect width="760" height="760" fill="url(#diamondsA)"/>
+  <rect x="18" y="18" width="724" height="724" fill="none" stroke="#090909" stroke-width="14"/>
+</svg>
